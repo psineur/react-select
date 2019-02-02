@@ -1,6 +1,6 @@
 {
   "name": "react-select-cxx",
-  "version": "2.3.0-2",
+  "version": "2.3.0-3",
   "description": "react-select fork on @psineur, to add external cx & fix mobile not working",
   "main": "lib/index.js",
   "module": "dist/react-select.esm.js",
