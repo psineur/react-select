@@ -174,6 +174,8 @@ export type Props = {
   isRtl: boolean,
   /* Whether to enable search functionality */
   isSearchable: boolean,
+  /* Whether to enable focus/blur functionality. */
+  isFocusable: boolean,
   /* Async: Text to display when loading options */
   loadingMessage: ({ inputValue: string }) => string | null,
   /* Minimum height of the menu before flipping */
@@ -268,6 +270,7 @@ export const defaultProps = {
   isMulti: false,
   isRtl: false,
   isSearchable: true,
+  isFocusable: true,
   isOptionDisabled: isOptionDisabled,
   loadingMessage: () => 'Loading...',
   maxMenuHeight: 300,
@@ -471,11 +474,11 @@ export default class Select extends Component<Props, State> {
   // ==============================
 
   focusInput() {
-    if (!this.inputRef) return;
+    if (!this.inputRef || !this.props.isFocusable) return;
     this.inputRef.focus();
   }
   blurInput() {
-    if (!this.inputRef) return;
+    if (!this.inputRef || !this.props.isFocusable) return;
     this.inputRef.blur();
   }
 
@@ -886,8 +889,8 @@ export default class Select extends Component<Props, State> {
     this.blockOptionHover = false;
   };
   onControlMouseDown = (event: MouseOrTouchEvent) => {
-    const { openMenuOnClick } = this.props;
-    if (!this.state.isFocused) {
+    const { openMenuOnClick, isFocusable } = this.props;
+    if (!this.state.isFocused && isFocusable) {
       if (openMenuOnClick) {
         this.openAfterFocus = true;
       }
@@ -1364,10 +1367,14 @@ export default class Select extends Component<Props, State> {
     const {
       isDisabled,
       isSearchable,
+      isFocusable,
       inputId,
       inputValue,
       tabIndex,
     } = this.props;
+    if (!isSearchable && !isFocusable) {
+      return null;
+    }
     const { Input } = this.components;
     const { inputIsHidden } = this.state;
 
@@ -1439,6 +1446,7 @@ export default class Select extends Component<Props, State> {
       isMulti,
       inputValue,
       placeholder,
+      isFocusable,
     } = this.props;
     const { selectValue, focusedValue, isFocused } = this.state;
 
@@ -1448,7 +1456,7 @@ export default class Select extends Component<Props, State> {
           {...commonProps}
           key="placeholder"
           isDisabled={isDisabled}
-          isFocused={isFocused}
+          isFocused={isFocused && isFocusable}
         >
           {placeholder}
         </Placeholder>
@@ -1466,7 +1474,7 @@ export default class Select extends Component<Props, State> {
               Label: MultiValueLabel,
               Remove: MultiValueRemove,
             }}
-            isFocused={isFocused}
+            isFocused={isFocused && isFocusable}
             isDisabled={isDisabled}
             key={this.getOptionValue(opt)}
             removeProps={{
@@ -1500,7 +1508,7 @@ export default class Select extends Component<Props, State> {
   renderClearIndicator() {
     const { ClearIndicator } = this.components;
     const { commonProps } = this;
-    const { isDisabled, isLoading } = this.props;
+    const { isDisabled, isLoading, isFocusable } = this.props;
     const { isFocused } = this.state;
 
     if (
@@ -1523,14 +1531,14 @@ export default class Select extends Component<Props, State> {
       <ClearIndicator
         {...commonProps}
         innerProps={innerProps}
-        isFocused={isFocused}
+        isFocused={isFocused && isFocusable}
       />
     );
   }
   renderLoadingIndicator() {
     const { LoadingIndicator } = this.components;
     const { commonProps } = this;
-    const { isDisabled, isLoading } = this.props;
+    const { isDisabled, isLoading, isFocusable } = this.props;
     const { isFocused } = this.state;
 
     if (!LoadingIndicator || !isLoading) return null;
@@ -1541,7 +1549,7 @@ export default class Select extends Component<Props, State> {
         {...commonProps}
         innerProps={innerProps}
         isDisabled={isDisabled}
-        isFocused={isFocused}
+        isFocused={isFocused && isFocusable}
       />
     );
   }
@@ -1552,14 +1560,14 @@ export default class Select extends Component<Props, State> {
     if (!DropdownIndicator || !IndicatorSeparator) return null;
 
     const { commonProps } = this;
-    const { isDisabled } = this.props;
+    const { isDisabled, isFocusable } = this.props;
     const { isFocused } = this.state;
 
     return (
       <IndicatorSeparator
         {...commonProps}
         isDisabled={isDisabled}
-        isFocused={isFocused}
+        isFocused={isFocused && isFocusable}
       />
     );
   }
@@ -1567,7 +1575,7 @@ export default class Select extends Component<Props, State> {
     const { DropdownIndicator } = this.components;
     if (!DropdownIndicator) return null;
     const { commonProps } = this;
-    const { isDisabled } = this.props;
+    const { isDisabled, isFocusable } = this.props;
     const { isFocused } = this.state;
 
     const innerProps = {
@@ -1581,7 +1589,7 @@ export default class Select extends Component<Props, State> {
         {...commonProps}
         innerProps={innerProps}
         isDisabled={isDisabled}
-        isFocused={isFocused}
+        isFocused={isFocused && isFocusable}
       />
     );
   }
@@ -1779,7 +1787,7 @@ export default class Select extends Component<Props, State> {
       ValueContainer,
     } = this.components;
 
-    const { className, id, isDisabled, menuIsOpen } = this.props;
+    const { className, id, isDisabled, menuIsOpen, isFocusable } = this.props;
     const { isFocused } = this.state;
 
     const commonProps = (this.commonProps = this.getCommonProps());
@@ -1793,7 +1801,7 @@ export default class Select extends Component<Props, State> {
           onKeyDown: this.onKeyDown,
         }}
         isDisabled={isDisabled}
-        isFocused={isFocused}
+        isFocused={isFocused && isFocusable}
       >
         {this.renderLiveRegion()}
         <Control
@@ -1804,7 +1812,7 @@ export default class Select extends Component<Props, State> {
             onTouchEnd: this.onControlTouchEnd,
           }}
           isDisabled={isDisabled}
-          isFocused={isFocused}
+          isFocused={isFocused && isFocusable}
           menuIsOpen={menuIsOpen}
         >
           <ValueContainer {...commonProps} isDisabled={isDisabled}>
