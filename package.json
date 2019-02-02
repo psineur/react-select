@@ -1,7 +1,7 @@
 {
-  "name": "react-select",
+  "name": "react-select-cxx",
   "version": "2.3.0",
-  "description": "A Select control built with and for ReactJS",
+  "description": "react-select fork on @psineur, to add external cx injection through props",
   "main": "lib/index.js",
   "module": "dist/react-select.esm.js",
   "sideEffects": false,
@@ -9,7 +9,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/JedWatson/react-select.git"
+    "url": "https://github.com/psineur/react-select.git"
   },
   "dependencies": {
     "classnames": "^2.2.5",
